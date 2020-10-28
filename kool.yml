@@ -1,0 +1,2 @@
+scripts:
+  yarn: kool docker kooldev/node yarn
