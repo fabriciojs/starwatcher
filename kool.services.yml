@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  watcher:
+    image: kooldev/node
+    command: [ 'yarn', 'start' ]
+    environment:
+      REPO: "${REPO:-kool-dev/kool}"
+      SLACK_URL: "${SLACK_URL}"
+      SLACK_CHANNEL: "${SLACK_CHANNEL}"
+      CHECK_INTERVAL: "${CHECK_INTERVAL}"
+    volumes:
+      - ./:/app
