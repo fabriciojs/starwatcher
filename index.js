@@ -5,9 +5,9 @@ const ms = require('ms')
 const CHECK_INTERVAL = process.env.CHECK_INTERVAL || '2m'
 const REPO = process.env.REPO || 'zeit/hyper'
 const NOTIFY_INTERVAL = process.env.NOTIFY_INTERVAL || 1
-const SLACK_URL = process.env.SLACK_URL
-const SLACK_CHANNEL = process.env.SLACK_CHANNEL
-const SLACK_USERNAME = process.env.SLACK_NAME || 'StarWatcher'
+const INCOMING_WEBHOOK_URL = process.env.INCOMING_WEBHOOK_URL
+const NOTIFICATION_CHANNEL = process.env.NOTIFICATION_CHANNEL
+const NOTIFICATION_USERNAME = process.env.NOTIFICATION_USERNAME || 'StarWatcher'
 
 const INTERVAL = ms(CHECK_INTERVAL)
 const REPO_URL = `https://github.com/${REPO}`
@@ -21,19 +21,20 @@ const stats = {
 }
 
 const notify = async () => {
-  if (!SLACK_URL) {
+  if (!INCOMING_WEBHOOK_URL) {
+    console.log('No INCOMING_WEBHOOK_URL provided; nothing to watch for')
     return
   }
   const payload = {
     text: `<${REPO_URL}|*${REPO}*> just reached ${stars} :star:`,
     icon_emoji: ':star:',
-    username: SLACK_USERNAME
+    username: NOTIFICATION_USERNAME
   }
-  if (SLACK_CHANNEL) {
-    payload['channel'] = SLACK_CHANNEL
+  if (NOTIFICATION_CHANNEL) {
+    payload['channel'] = NOTIFICATION_CHANNEL
   }
   try {
-    await got.post(SLACK_URL, {
+    await got.post(INCOMING_WEBHOOK_URL, {
       body: JSON.stringify(payload)
     })
     console.log(`Notification sent: ${payload.text}`)
